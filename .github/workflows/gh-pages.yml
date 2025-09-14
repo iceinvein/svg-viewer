@@ -23,17 +23,31 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Install Node first (no pnpm cache yet)
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
 
+      # Install pnpm so it's available on PATH
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 9
           run_install: false
+
+      # Optional: verify pnpm is available
+      - name: Verify pnpm
+        run: |
+          pnpm -v
+          which pnpm
+
+      # Re-run setup-node to enable pnpm cache now that pnpm exists
+      - name: Enable pnpm cache
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
