@@ -27,10 +27,11 @@ jobs:
           node-version: 20
           cache: 'pnpm'
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
+      - name: Enable Corepack (pnpm)
+        run: corepack enable
+
+      - name: Prepare pnpm 9
+        run: corepack prepare pnpm@9 --activate
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -40,6 +41,9 @@ jobs:
 
       - name: Build (Vite with relative base for Pages)
         run: pnpm exec vite build --base=./
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
