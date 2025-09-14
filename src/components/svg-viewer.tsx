@@ -4,7 +4,6 @@ import { Divider } from "@heroui/divider";
 import { SvgToolbar } from "./svg-toolbar";
 import { SvgPreview } from "./svg-preview";
 
-import { optimize, type Config as SvgoConfig } from "svgo";
 import { inflate } from "pako";
 import CodeMirror from "@uiw/react-codemirror";
 import { xml } from "@codemirror/lang-xml";
@@ -49,7 +48,9 @@ async function downloadBlob(filename: string, data: Blob | string, type?: string
 
 
 
-const buildSvgoConfig = (overrides: Record<string, boolean>): SvgoConfig => ({
+const buildSvgoConfig = (
+  overrides: Record<string, boolean>
+): import("svgo/dist/svgo.browser.js").Config => ({
   multipass: true,
   plugins: [
     {
@@ -159,7 +160,8 @@ export function SvgViewer() {
 
 
 
-  const optimizeSvg = () => {
+  const optimizeSvg = async () => {
+    const { optimize } = await import("svgo/dist/svgo.browser.js");
     const cfg = buildSvgoConfig(svgoFlags);
     const { data } = optimize(svg, cfg);
     setSvg(data);
